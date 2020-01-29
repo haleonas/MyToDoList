@@ -8,6 +8,7 @@
 
 #import "AddItemViewController.h"
 #import "MyTableViewController.h"
+#import "SaveAndRetrieveData.h"
 
 @interface AddItemViewController ()
 
@@ -24,15 +25,9 @@
     self.data = [[NSMutableArray alloc] init];
 }
 - (IBAction)addItemButton:(UIButton *)sender {
-    NSUserDefaults *myData = [NSUserDefaults standardUserDefaults];
+    SaveAndRetrieveData *saveAndRetrieve = [[SaveAndRetrieveData alloc]init];
     
-    self.data = [[myData objectForKey:@"data"] mutableCopy];
-    NSLog(@"%@", self.data);
-    
-    if(self.data == NULL)
-    {
-        self.data = [[NSMutableArray alloc] init];
-    }
+    self.data = [saveAndRetrieve retrieveData:@"data"];
     
     NSDate *date = [[NSDate alloc]init];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
@@ -59,9 +54,7 @@
     
     [self.data addObject:temp];
     
-    [myData setObject:self.data forKey:@"data"];
-    [myData synchronize];
-    
+    [saveAndRetrieve saveData:self.data andkey:@"data"];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

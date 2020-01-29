@@ -7,6 +7,7 @@
 //
 
 #import "MyTableViewController.h"
+#import "SaveAndRetrieveData.h"
 
 @interface MyTableViewController ()
 
@@ -49,7 +50,6 @@
     self.dataDone = [[NSMutableArray alloc] init];
     
     self.myTableView = [self makeTableView];
-    //[self.myTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"lol"];
     [self.tableViewContainer addSubview:self.myTableView];
 }
 
@@ -96,12 +96,8 @@
     {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"ToDo"];
     }
-    if(indexPath.section == 1)
-    {
-        cell.textLabel.text = (self.dataDone[indexPath.row])[@"text"];
-        cell.detailTextLabel.text = (self.dataDone[indexPath.row][@"date"]);
-    }
-    else
+    
+    if(indexPath.section == 0)
     {
         cell.textLabel.text = (self.data[indexPath.row])[@"text"];
         cell.detailTextLabel.text = (self.data[indexPath.row][@"date"]);
@@ -109,6 +105,11 @@
         {
             cell.textLabel.textColor = [UIColor redColor];
         }
+    }
+    else if(indexPath.section == 1)
+    {
+        cell.textLabel.text = (self.dataDone[indexPath.row])[@"text"];
+        cell.detailTextLabel.text = (self.dataDone[indexPath.row][@"date"]);
     }
     return cell;
 }
@@ -127,20 +128,16 @@
 
 -(void) retrieveData
 {
-    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
-    self.data = [[data objectForKey:@"data"]mutableCopy];
-    self.dataDone = [[data objectForKey:@"dataDone"]mutableCopy];
-    if(self.dataDone == NULL)
-    {
-        self.dataDone = [[NSMutableArray alloc] init];
-    }
+    SaveAndRetrieveData *saveAndRetrieve = [[SaveAndRetrieveData alloc]init];
+    self.data = [saveAndRetrieve retrieveData:@"data"];
+    self.dataDone = [saveAndRetrieve retrieveData:@"dataDone"];
     [self.myTableView reloadData];
 }
 -(void)saveData
 {
-    NSUserDefaults *data = [NSUserDefaults standardUserDefaults];
-    [data setObject:self.data forKey:@"data"];
-    [data setObject:self.dataDone forKey:@"dataDone"];
+    SaveAndRetrieveData *saveAndRetrieve = [[SaveAndRetrieveData alloc]init];
+    [saveAndRetrieve saveData:self.data andkey:@"data"];
+    [saveAndRetrieve saveData:self.dataDone andkey:@"dataDone"];
 }
 
 -(void)viewDidAppear:(BOOL)animated
